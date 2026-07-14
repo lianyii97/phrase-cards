@@ -297,7 +297,10 @@
     <div class="face back">
       <div class="lang-tag" style="color:#555">English</div>
       <div class="en" id="en"></div>
-      <button class="speak-btn" id="speakBtn" onclick="speak(event)">🔊 朗读</button>
+      <div style="display:flex;gap:10px;margin-bottom:14px">
+        <button class="speak-btn" id="speakBtn" onclick="speak(event,0.9)" style="margin-bottom:0">🔊 朗读</button>
+        <button class="speak-btn" id="speakSlowBtn" onclick="speak(event,0.55)" style="margin-bottom:0">🐢 慢速</button>
+      </div>
       <div class="example-wrap" id="exWrap">
         <div class="example-label">例句 · Example</div>
         <div class="example" id="ex"></div>
@@ -376,16 +379,15 @@ function shuffle() {
   render();
 }
 
-function speak(e) {
+function speak(e, rate) {
   if (e) e.stopPropagation();
   if (!phrases.length) return;
-  const text = phrases[cur].en.split(' / ')[0]; // 只读第一个说法
+  const text = phrases[cur].en.split(' / ')[0];
   window.speechSynthesis.cancel();
-  const btn = document.getElementById('speakBtn');
+  const btn = e ? e.currentTarget : document.getElementById('speakBtn');
   const utt = new SpeechSynthesisUtterance(text);
   utt.lang = 'en-US';
-  utt.rate = 0.9;
-  // 优先选美式英语女声
+  utt.rate = rate || 0.9;
   const voices = window.speechSynthesis.getVoices();
   const preferred = voices.find(v => v.lang === 'en-US' && v.name.includes('Samantha'))
     || voices.find(v => v.lang === 'en-US')
