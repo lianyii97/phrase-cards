@@ -1,0 +1,17 @@
+{
+  "name": "英语口语卡片",
+  "short_name": "口语",
+  "description": "日常中文口语 → 地道英文",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#FFF9E6",
+  "theme_color": "#F5C542",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

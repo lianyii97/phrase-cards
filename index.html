@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="口语卡片">
+  <title>英语口语卡片 🐾</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream: #FFF9E6;
+      --yellow: #F5C542;
+      --red: #D63B2F;
+      --blue: #7BC8E2;
+      --green: #82C341;
+      --dark: #1E1E1E;
+      --white: #FFFFFF;
+      --font-comic: 'Caveat', 'Comic Sans MS', cursive;
+      --font-ui: -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: var(--font-ui);
+      background-color: var(--cream);
+      background-image:
+        radial-gradient(circle, #D9C89A 1.2px, transparent 1.2px);
+      background-size: 22px 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 16px 20px;
+      padding-top: max(12px, env(safe-area-inset-top));
+      padding-bottom: max(20px, env(safe-area-inset-bottom));
+      gap: 12px;
+      user-select: none;
+    }
+
+    /* ── Header ── */
+    .header {
+      width: 100%;
+      max-width: 440px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .title {
+      font-family: var(--font-comic);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .badge {
+      font-family: var(--font-comic);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--dark);
+      background: var(--yellow);
+      border: 2.5px solid var(--dark);
+      border-radius: 50px;
+      padding: 3px 14px;
+      box-shadow: 3px 3px 0 var(--dark);
+    }
+
+    .shuffle-btn {
+      font-family: var(--font-comic);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--dark);
+      background: var(--white);
+      border: 2.5px solid var(--dark);
+      border-radius: 12px;
+      padding: 5px 12px;
+      cursor: pointer;
+      box-shadow: 3px 3px 0 var(--dark);
+      transition: box-shadow .08s, transform .08s;
+    }
+    .shuffle-btn:active { box-shadow: 0 0 0 var(--dark); transform: translate(3px,3px); }
+
+    /* ── Card Scene ── */
+    .scene {
+      width: 100%;
+      max-width: 440px;
+      flex: 1;
+      perspective: 1200px;
+      min-height: 0;
+    }
+
+    .card {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform .55s cubic-bezier(.4,.2,.2,1);
+      cursor: pointer;
+    }
+    .card.flipped { transform: rotateY(180deg); }
+
+    .face {
+      position: absolute;
+      inset: 0;
+      border-radius: 26px;
+      border: 3px solid var(--dark);
+      box-shadow: 5px 5px 0 var(--dark);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 22px;
+      gap: 0;
+    }
+
+    /* Front */
+    .front { background: var(--white); }
+
+    .lang-tag {
+      font-family: var(--font-ui);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #aaa;
+      align-self: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .zh {
+      font-family: var(--font-comic);
+      font-size: clamp(26px, 7vw, 36px);
+      font-weight: 700;
+      color: var(--dark);
+      text-align: center;
+      line-height: 1.35;
+    }
+
+    .paw-hint {
+      margin-top: auto;
+      font-family: var(--font-ui);
+      font-size: 13px;
+      color: #ccc;
+      padding-top: 16px;
+    }
+
+    /* Back */
+    .back {
+      background: var(--blue);
+      transform: rotateY(180deg);
+    }
+
+    .en {
+      font-family: var(--font-comic);
+      font-size: clamp(22px, 6vw, 30px);
+      font-weight: 700;
+      color: var(--dark);
+      text-align: center;
+      line-height: 1.35;
+      margin-bottom: 16px;
+    }
+
+    .example-wrap {
+      width: 100%;
+      background: rgba(255,255,255,0.55);
+      border: 2.5px solid var(--dark);
+      border-radius: 16px;
+      padding: 12px 16px;
+    }
+
+    .example-label {
+      font-family: var(--font-ui);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: #777;
+      margin-bottom: 6px;
+    }
+
+    .example {
+      font-family: var(--font-ui);
+      font-size: 14px;
+      color: #333;
+      font-style: italic;
+      text-align: center;
+      line-height: 1.55;
+    }
+
+    /* ── Empty state ── */
+    .empty {
+      position: absolute;
+      inset: 0;
+      border-radius: 26px;
+      border: 3px solid var(--dark);
+      box-shadow: 5px 5px 0 var(--dark);
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      gap: 10px;
+    }
+    .empty-emoji { font-size: 56px; }
+    .empty-title {
+      font-family: var(--font-comic);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--dark);
+      text-align: center;
+    }
+    .empty-sub {
+      font-size: 14px;
+      color: #888;
+      text-align: center;
+      line-height: 1.5;
+    }
+    .empty-code {
+      font-family: monospace;
+      background: var(--cream);
+      border: 1.5px solid #ccc;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 14px;
+      color: var(--dark);
+      margin-top: 4px;
+    }
+
+    /* ── Nav ── */
+    .nav {
+      width: 100%;
+      max-width: 440px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      font-family: var(--font-comic);
+      font-weight: 700;
+      border: 2.5px solid var(--dark);
+      border-radius: 16px;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 var(--dark);
+      transition: box-shadow .08s, transform .08s;
+      padding: 14px 0;
+      text-align: center;
+      font-size: 18px;
+    }
+    .btn:active { box-shadow: 0 0 0 var(--dark); transform: translate(4px,4px); }
+
+    .btn-arrow { background: var(--white); flex: 1; color: var(--dark); }
+    .btn-flip  { background: var(--yellow); flex: 2; color: var(--dark); font-size: 16px; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="title">🐾 口语卡片</div>
+  <div class="badge" id="badge">0 / 0</div>
+  <button class="shuffle-btn" id="shuffleBtn" onclick="shuffle()">🔀 打乱</button>
+</div>
+
+<div class="scene" id="scene">
+  <div class="card" id="card" onclick="flip()">
+    <div class="face front">
+      <div class="lang-tag">中文</div>
+      <div class="zh" id="zh">加载中…</div>
+      <div class="paw-hint">点击翻转 🐾</div>
+    </div>
+    <div class="face back">
+      <div class="lang-tag" style="color:#555">English</div>
+      <div class="en" id="en"></div>
+      <div class="example-wrap" id="exWrap">
+        <div class="example-label">例句 · Example</div>
+        <div class="example" id="ex"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="nav" id="nav">
+  <button class="btn btn-arrow" onclick="prev()">← 上一张</button>
+  <button class="btn btn-flip" onclick="flip()">翻转 🔄</button>
+  <button class="btn btn-arrow" onclick="next()">下一张 →</button>
+</div>
+
+<script>
+let phrases = [], cur = 0, flipped = false;
+
+async function load() {
+  try {
+    const r = await fetch('./phrases.json?v=' + Date.now());
+    phrases = await r.json();
+  } catch { phrases = []; }
+  phrases.length ? render() : showEmpty();
+}
+
+function showEmpty() {
+  document.getElementById('badge').textContent = '0 / 0';
+  document.getElementById('nav').style.display = 'none';
+  document.getElementById('scene').innerHTML = `
+    <div class="empty">
+      <div class="empty-emoji">💤🐶</div>
+      <div class="empty-title">还没有口语词汇</div>
+      <div class="empty-sub">在 Telegram 发送：</div>
+      <div class="empty-code">词: 随便说说</div>
+      <div class="empty-sub" style="margin-top:4px">就会自动添加进来 🐾</div>
+    </div>`;
+}
+
+function render() {
+  const p = phrases[cur];
+  document.getElementById('zh').textContent = p.zh;
+  document.getElementById('en').textContent = p.en;
+  const hasEx = p.example && p.example.trim();
+  document.getElementById('exWrap').style.display = hasEx ? 'block' : 'none';
+  document.getElementById('ex').textContent = p.example || '';
+  document.getElementById('badge').textContent = `${cur + 1} / ${phrases.length}`;
+  flipped = false;
+  document.getElementById('card').classList.remove('flipped');
+}
+
+function flip() {
+  if (!phrases.length) return;
+  flipped = !flipped;
+  document.getElementById('card').classList.toggle('flipped', flipped);
+}
+
+function next() {
+  if (!phrases.length) return;
+  cur = (cur + 1) % phrases.length;
+  render();
+}
+
+function prev() {
+  if (!phrases.length) return;
+  cur = (cur - 1 + phrases.length) % phrases.length;
+  render();
+}
+
+function shuffle() {
+  if (!phrases.length) return;
+  for (let i = phrases.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [phrases[i], phrases[j]] = [phrases[j], phrases[i]];
+  }
+  cur = 0;
+  render();
+}
+
+// 键盘
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') next();
+  else if (e.key === 'ArrowLeft') prev();
+  else if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flip(); }
+});
+
+// 滑动
+let tx = 0, ty = 0;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX;
+  ty = e.touches[0].clientY;
+}, { passive: true });
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - tx;
+  const dy = e.changedTouches[0].clientY - ty;
+  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 48) {
+    dx < 0 ? next() : prev();
+  }
+}, { passive: true });
+
+// Service Worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+}
+
+load();
+</script>
+</body>
+</html>
