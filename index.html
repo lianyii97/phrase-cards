@@ -285,6 +285,7 @@
   <div class="title">🐾 口语卡片</div>
   <div class="badge" id="badge">0 / 0</div>
   <button class="shuffle-btn" id="shuffleBtn" onclick="shuffle()">🔀 打乱</button>
+  <button class="shuffle-btn" id="refreshBtn" onclick="reload()" title="刷新">↻</button>
 </div>
 
 <div class="scene" id="scene">
@@ -418,6 +419,17 @@ document.addEventListener('touchend', e => {
     dx < 0 ? next() : prev();
   }
 }, { passive: true });
+
+// 每次从后台切回来自动刷新
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') load();
+});
+
+function reload() {
+  const btn = document.getElementById('refreshBtn');
+  btn.textContent = '…';
+  load().then(() => { btn.textContent = '↻'; });
+}
 
 // Service Worker
 if ('serviceWorker' in navigator) {
