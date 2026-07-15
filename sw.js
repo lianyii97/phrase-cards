@@ -1,4 +1,4 @@
-const CACHE = 'phrase-cards-v4';
+const CACHE = 'phrase-cards-v5';
 const STATIC = ['./', './index.html', './manifest.json', './icon.svg', './sw.js'];
 
 self.addEventListener('install', e => {
